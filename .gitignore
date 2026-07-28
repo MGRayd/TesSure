@@ -1,4 +1,6 @@
 # Project exclude paths
+/.idea/
+/local.properties
 /.gradle/
 /app/build/
 /app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/

@@ -13,4 +13,16 @@ android {
         versionCode 1
         versionName '1.0'
     }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "TesSure-${variant.name}-${variant.versionName}.apk"
+        }
+    }
 }

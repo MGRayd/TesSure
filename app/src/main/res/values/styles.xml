@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:colorAccent">#CC0000</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">#0A0C12</item>
+        <item name="android:navigationBarColor">#0A0C12</item>
+        <item name="android:statusBarColor">#0E1119</item>
+        <item name="android:colorAccent">#DC1C2E</item>
+    </style>
+
+    <style name="ChecklistPopupAnimation">
+        <item name="android:windowEnterAnimation">@anim/menu_slide_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_slide_out</item>
     </style>
 </resources>
