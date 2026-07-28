@@ -3,5 +3,6 @@
 /local.properties
 /.gradle/
 /app/build/
+/app/release/
 /app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/
 /build/
