@@ -62,32 +62,30 @@ public class MainActivity extends Activity {
     }
 
     private final CheckItem[] CHECKS = new CheckItem[] {
-        new CheckItem("Before You Arrive", "Bring your driver's licence"),
+        new CheckItem("Before You Arrive", "Valid drivers licence"),
         new CheckItem("Before You Arrive", "Tesla app downloaded and logged in"),
         new CheckItem("Before You Arrive", "VIN and delivery appointment confirmed"),
-        new CheckItem("Before You Arrive", "Bring paperwork or trade-in documents if required"),
+        new CheckItem("Before You Arrive", "Paperwork or trade-in documents if required"),
         new CheckItem("Before You Arrive", "Phone fully charged"),
 
         new CheckItem("Exterior Checks Stage 1", "No scratches, dents, or paint chips on body panels"),
-        new CheckItem("Exterior Checks Stage 1", "Consistent panel gaps and alignment: doors, trunk, frunk, charge port"),
+        new CheckItem("Exterior Checks Stage 1", "Consistent panel gaps and alignment: doors, boot, frunk, charge port"),
         new CheckItem("Exterior Checks Stage 1", "No smudges or uneven paint blending"),
         new CheckItem("Exterior Checks Stage 1", "Door handles flush and functional"),
         new CheckItem("Exterior Checks Stage 1", "No loose trim or rubber seals"),
 
         new CheckItem("Exterior Checks Stage 1", "Windscreen and windows free from cracks, chips, or scratches"),
-        new CheckItem("Exterior Checks Stage 1", "Mirrors properly attached and functional"),
         new CheckItem("Exterior Checks Stage 1", "Roof glass free from distortion, cracks, chips, or scratches"),
+        new CheckItem("Exterior Checks Stage 1", "Mirrors properly attached and functional"),
 
         new CheckItem("Exterior Checks Stage 1", "All rims scratch-free and undamaged"),
         new CheckItem("Exterior Checks Stage 1", "Tyres match the expected spec and correct size"),
         new CheckItem("Exterior Checks Stage 1", "Adequate tyre tread and proper inflation"),
-        new CheckItem("Exterior Checks Stage 1", "Check under the car for visible damage"),
-
         new CheckItem("Exterior Checks Stage 2", "Headlights, taillights, and indicators aligned and working"),
         new CheckItem("Exterior Checks Stage 2", "Cameras clean and lens covers intact"),
         new CheckItem("Exterior Checks Stage 2", "Frunk opens smoothly and seals properly"),
-        new CheckItem("Exterior Checks Stage 2", "Trunk opens/closes without resistance or misalignment"),
-        new CheckItem("Exterior Checks Stage 2", "Frunk and trunk carpeting clean and attached"),
+        new CheckItem("Exterior Checks Stage 2", "Boot opens/closes without resistance or misalignment"),
+        new CheckItem("Exterior Checks Stage 2", "Frunk and boot carpeting clean and attached"),
         new CheckItem("Exterior Checks Stage 2", "Emergency triangle / first aid kit if applicable"),
 
         new CheckItem("Interior & Cabin Tech", "No marks, stains, or creases on seats"),
@@ -102,48 +100,39 @@ public class MainActivity extends Activity {
         new CheckItem("Interior & Cabin Tech", "Check software version in Settings > Software"),
 
         new CheckItem("Interior & Cabin Tech", "Test A/C and heater on all vents"),
-        new CheckItem("Interior & Cabin Tech", "Test heated seats where applicable"),
+        new CheckItem("Interior & Cabin Tech", "Test heated seats / cooling seats where applicable"),
         new CheckItem("Interior & Cabin Tech", "Bluetooth pairs with your phone"),
         new CheckItem("Interior & Cabin Tech", "Audio system works properly"),
-        new CheckItem("Interior & Cabin Tech", "Test reversing camera and visualisation"),
+        new CheckItem("Interior & Cabin Tech", "Check cameras are working on all sides of car"),
 
         new CheckItem("Interior & Cabin Tech", "All doors open, close, and lock smoothly"),
         new CheckItem("Interior & Cabin Tech", "Windows roll up/down without noise"),
         new CheckItem("Interior & Cabin Tech", "Child locks functional if applicable"),
 
-        new CheckItem("Exterior Checks Stage 2", "Mirrors auto-dim and adjust via controls"),
-        new CheckItem("Exterior Checks Stage 2", "Rear-view mirror properly aligned"),
-        new CheckItem("Exterior Checks Stage 2", "Wipers function with no smears or squeaks"),
+        new CheckItem("Interior & Cabin Tech", "Mirrors auto-dim and adjust via controls"),
+        new CheckItem("Interior & Cabin Tech", "Rear-view mirror properly aligned"),
+        new CheckItem("Exterior Checks Stage 2", "Operate the wipers and confirm they move smoothly without smearing, juddering, or squeaking (Activate via steering wheel)"),
         new CheckItem("Exterior Checks Stage 2", "Washer fluid sprays correctly"),
 
         new CheckItem("Access, Charging & Documents", "Tesla app connects and unlocks car"),
         new CheckItem("Access, Charging & Documents", "Test mobile key and/or key card"),
-        new CheckItem("Access, Charging & Documents", "Add second phone/user if needed"),
         new CheckItem("Access, Charging & Documents", "Try remote climate control"),
 
         new CheckItem("Access, Charging & Documents", "Charge port door opens from app, screen, and touch, then closes properly"),
         new CheckItem("Access, Charging & Documents", "Mobile charger present if included"),
         new CheckItem("Access, Charging & Documents", "Test charger unlock button"),
-        new CheckItem("Access, Charging & Documents", "Plug in at delivery point if possible"),
-
         new CheckItem("Access, Charging & Documents", "Vehicle logbook / V5C submitted if UK"),
         new CheckItem("Access, Charging & Documents", "Confirm correct vehicle spec and VIN"),
         new CheckItem("Access, Charging & Documents", "Warranty, manual, and service info provided digitally"),
-        new CheckItem("Access, Charging & Documents", "Insurance active from delivery date"),
-        new CheckItem("Access, Charging & Documents", "Vehicle taxed and ready to drive if UK"),
-
         new CheckItem("Final Checks", "Number plates correct and securely fitted"),
         new CheckItem("Final Checks", "Test horn"),
         new CheckItem("Final Checks", "Included accessories present: floor mats, sunshade, tow hook, etc."),
         new CheckItem("Final Checks", "Take a test drive around the lot/block if possible"),
 
-        new CheckItem("Final Checks", "Back up car profile/settings to Tesla Account"),
-        new CheckItem("Final Checks", "Schedule first software update if needed"),
         new CheckItem("Final Checks", "Set up home/work charging in Navigation"),
         new CheckItem("Final Checks", "Set Sentry Mode preferences"),
         new CheckItem("Final Checks", "Take a nice exterior photo of the car"),
-        new CheckItem("Final Checks", "Take a nice interior photo of the cabin"),
-        new CheckItem("Final Checks", "Review delivery photos")
+        new CheckItem("Final Checks", "Take a nice interior photo of the cabin")
     };
 
     @Override public void onCreate(Bundle b) {
@@ -152,6 +141,7 @@ public class MainActivity extends Activity {
         migrateLegacyModel3Checklist();
         migrateRemovedDoorHandleCheck();
         migrateDuplicateChecks();
+        migrateReviewedChecklist();
         setChecklistPreferences(selectedModel());
         showLandingPage();
     }
@@ -234,7 +224,8 @@ public class MainActivity extends Activity {
     private void migrateChecklistAfterDuplicateRemoval(android.content.SharedPreferences checklistPrefs) {
         android.content.SharedPreferences.Editor editor = checklistPrefs.edit();
         String[] prefixes = {"status_", "notes_", "photo_"};
-        for (int destination = 0; destination < CHECKS.length; destination++) {
+        final int checklistCountAfterDuplicateRemoval = 68;
+        for (int destination = 0; destination < checklistCountAfterDuplicateRemoval; destination++) {
             int source = destination < 18 ? destination : destination < 22 ? destination + 1 : destination + 2;
             if (source == destination) continue;
             for (String prefix : prefixes) {
@@ -249,10 +240,66 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        for (int oldIndex = CHECKS.length; oldIndex < 70; oldIndex++) {
+        for (int oldIndex = checklistCountAfterDuplicateRemoval; oldIndex < 70; oldIndex++) {
             for (String prefix : prefixes) editor.remove(prefix + oldIndex);
         }
         editor.apply();
+    }
+
+    private void migrateReviewedChecklist() {
+        if (selectionPrefs.getBoolean("reviewed_checklist_2026_migrated", false)) return;
+
+        migrateReviewedChecklistForModel(getSharedPreferences("tesla_checklist_model_3", MODE_PRIVATE));
+        migrateReviewedChecklistForModel(getSharedPreferences("tesla_checklist_model_y", MODE_PRIVATE));
+        selectionPrefs.edit().putBoolean("reviewed_checklist_2026_migrated", true).apply();
+    }
+
+    private void migrateReviewedChecklistForModel(android.content.SharedPreferences checklistPrefs) {
+        final int oldBuiltInCount = 68;
+        final int[] oldIndexForNewIndex = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47,
+            48, 49, 50, 52, 53, 54, 57, 58, 59, 60, 63, 64, 65, 66
+        };
+        final int customCount = checklistPrefs.getInt("custom_count", 0);
+        final Map<String, ?> snapshot = new HashMap<>(checklistPrefs.getAll());
+        final android.content.SharedPreferences.Editor editor = checklistPrefs.edit();
+        final String[] prefixes = {"status_", "notes_", "photo_"};
+
+        for (int destination = 0; destination < oldIndexForNewIndex.length; destination++) {
+            int source = oldIndexForNewIndex[destination];
+            for (String prefix : prefixes) {
+                copyStoredChecklistValue(editor, snapshot, prefix + source, prefix + destination);
+            }
+        }
+
+        for (int customIndex = 0; customIndex < customCount; customIndex++) {
+            int source = oldBuiltInCount + customIndex;
+            int destination = CHECKS.length + customIndex;
+            for (String prefix : prefixes) {
+                copyStoredChecklistValue(editor, snapshot, prefix + source, prefix + destination);
+            }
+        }
+
+        int newTotalCount = CHECKS.length + customCount;
+        int oldTotalCount = oldBuiltInCount + customCount;
+        for (int index = newTotalCount; index < oldTotalCount; index++) {
+            for (String prefix : prefixes) editor.remove(prefix + index);
+        }
+        editor.apply();
+    }
+
+    private void copyStoredChecklistValue(
+        android.content.SharedPreferences.Editor editor,
+        Map<String, ?> snapshot,
+        String source,
+        String destination
+    ) {
+        Object value = snapshot.get(source);
+        if (value instanceof Integer) editor.putInt(destination, (Integer) value);
+        else if (value instanceof String) editor.putString(destination, (String) value);
+        else editor.remove(destination);
     }
 
     private void reloadActiveChecks() {
@@ -502,8 +549,7 @@ public class MainActivity extends Activity {
 
         final PopupWindow[] popup = new PopupWindow[1];
         addMenuItem(menu, "Choose Section", "Jump to another checklist section", true, () -> {
-            popup[0].dismiss();
-            showSectionPicker();
+            showSectionPicker(menu, popup[0]);
         });
         addMenuItem(menu, "View Issues", "Review issues with Tesla staff", false, () -> {
             popup[0].dismiss();
@@ -522,7 +568,10 @@ public class MainActivity extends Activity {
             confirmReset();
         });
 
-        popup[0] = new PopupWindow(menu, dp(292), WindowManager.LayoutParams.WRAP_CONTENT, true);
+        ScrollView scroll = new ScrollView(this);
+        scroll.setClipToPadding(false);
+        scroll.addView(menu);
+        popup[0] = new PopupWindow(scroll, dp(292), WindowManager.LayoutParams.WRAP_CONTENT, true);
         popup[0].setOutsideTouchable(true);
         popup[0].setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) popup[0].setElevation(dp(10));
@@ -550,18 +599,32 @@ public class MainActivity extends Activity {
         menu.addView(item, params);
     }
 
-    private void showSectionPicker() {
+    private void showSectionPicker(LinearLayout menu, PopupWindow popup) {
         if (sectionNames.isEmpty()) return;
-        CharSequence[] labels = new CharSequence[sectionNames.size()];
-        for (int i = 0; i < sectionNames.size(); i++) labels[i] = sectionDropdownLabel(sectionNames.get(i));
-        int selected = Math.max(0, sectionNames.indexOf(openSection));
-        new AlertDialog.Builder(this)
-            .setTitle("Choose section")
-            .setSingleChoiceItems(labels, selected, (dialog, which) -> {
-                setOpenSection(sectionNames.get(which));
-                dialog.dismiss();
-            })
-            .show();
+
+        menu.removeAllViews();
+
+        TextView title = text("Choose section", 13, TESLA_RED, true);
+        title.setLetterSpacing(0.08f);
+        title.setPadding(dp(6), 0, dp(6), dp(8));
+        menu.addView(title);
+
+        for (String section : sectionNames) {
+            int issues = sectionIssueCount(section);
+            String subtitle = issues > 0
+                ? issues + (issues == 1 ? " issue to review" : " issues to review")
+                : sectionComplete(section) ? "Section complete" : "Open checklist section";
+            addMenuItem(menu, section, subtitle, section.equals(openSection), () -> {
+                popup.dismiss();
+                setOpenSection(section);
+            });
+        }
+
+        int maxHeight = Math.min(dp(600), getResources().getDisplayMetrics().heightPixels - dp(130));
+        android.view.animation.AlphaAnimation fadeIn = new android.view.animation.AlphaAnimation(0f, 1f);
+        fadeIn.setDuration(160);
+        popup.update(dp(292), maxHeight);
+        menu.startAnimation(fadeIn);
     }
 
     private TextView text(String value, int sp, int color, boolean bold) {
@@ -1307,13 +1370,27 @@ public class MainActivity extends Activity {
         header.setBackgroundColor(Color.rgb(14, 17, 25));
         root.addView(header);
 
+        LinearLayout topRow = new LinearLayout(this);
+        topRow.setOrientation(LinearLayout.HORIZONTAL);
+        topRow.setGravity(Gravity.CENTER_VERTICAL);
+        header.addView(topRow, new LinearLayout.LayoutParams(-1, -2));
+
+        LinearLayout titleBlock = new LinearLayout(this);
+        titleBlock.setOrientation(LinearLayout.VERTICAL);
+        topRow.addView(titleBlock, new LinearLayout.LayoutParams(0, -2, 1));
+
         TextView eyebrow = text("ISSUE REVIEW", 12, TESLA_RED, true);
         eyebrow.setLetterSpacing(0.12f);
-        header.addView(eyebrow);
+        titleBlock.addView(eyebrow);
 
         TextView title = text("Work Through Issues", 25, TEXT, true);
         title.setPadding(0, dp(4), 0, dp(2));
-        header.addView(title);
+        titleBlock.addView(title);
+
+        Button hamburger = secondaryButton("☰");
+        hamburger.setTextSize(24);
+        hamburger.setOnClickListener(v -> showIssueReviewMenu(v));
+        topRow.addView(hamburger, new LinearLayout.LayoutParams(dp(54), dp(48)));
 
         ArrayList<String> issueSections = issueSections();
         int totalIssues = totalIssueCount();
@@ -1371,20 +1448,37 @@ public class MainActivity extends Activity {
             header.addView(issueSpinner, new LinearLayout.LayoutParams(-1, dp(52)));
         }
 
-        Button shareIssues = primaryButton("Export / Send Issues");
-        shareIssues.setOnClickListener(v -> shareIssuesReport());
-        LinearLayout.LayoutParams shareParams = new LinearLayout.LayoutParams(-1, dp(48));
-        shareParams.setMargins(0, dp(10), 0, 0);
-        header.addView(shareIssues, shareParams);
-
-        Button back = secondaryButton("Back to Checklist");
-        back.setOnClickListener(v -> showChecklistPage());
-        LinearLayout.LayoutParams backParams = new LinearLayout.LayoutParams(-1, dp(48));
-        backParams.setMargins(0, dp(8), 0, 0);
-        header.addView(back, backParams);
-
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(root);
+    }
+
+    private void showIssueReviewMenu(View anchor) {
+        LinearLayout menu = new LinearLayout(this);
+        menu.setOrientation(LinearLayout.VERTICAL);
+        menu.setPadding(dp(14), dp(12), dp(14), dp(12));
+        menu.setBackground(rounded(Color.rgb(18, 22, 32), dp(18), BORDER, 1));
+
+        TextView title = text("Issue review menu", 13, TESLA_RED, true);
+        title.setLetterSpacing(0.08f);
+        title.setPadding(dp(6), 0, dp(6), dp(8));
+        menu.addView(title);
+
+        final PopupWindow[] popup = new PopupWindow[1];
+        addMenuItem(menu, "Export / Send Issues", "Share the issue review with Tesla staff", true, () -> {
+            popup[0].dismiss();
+            shareIssuesReport();
+        });
+        addMenuItem(menu, "Back to Checklist", "Return to the delivery checklist", false, () -> {
+            popup[0].dismiss();
+            showChecklistPage();
+        });
+
+        popup[0] = new PopupWindow(menu, dp(292), WindowManager.LayoutParams.WRAP_CONTENT, true);
+        popup[0].setOutsideTouchable(true);
+        popup[0].setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) popup[0].setElevation(dp(10));
+        popup[0].setAnimationStyle(getResources().getIdentifier("ChecklistPopupAnimation", "style", getPackageName()));
+        popup[0].showAsDropDown(anchor, -dp(238), dp(8));
     }
 
     private void styleIssueSectionText(TextView view, String section, boolean dropdown) {
