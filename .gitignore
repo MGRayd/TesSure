@@ -6,3 +6,5 @@
 /app/release/
 /app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/
 /build/
+/TesSure_Checklist_Review.xlsx
+/tools/export_checklists.py
